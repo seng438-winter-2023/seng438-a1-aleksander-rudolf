@@ -1,0 +1,776 @@
+Issue Type,Issue key,Issue id,Summary,Reporter,Reporter Id,Priority,Status,Resolution,Created,Updated,Affects versions,Affects versions,Description,Fix versions,Fix versions
+Bug,AM10-4,10005,Deposit Money: Incorrect amount deposited in checking and savings accounts when the amount is above $10,Jannine Osman,63cc1268f6d42a7a4633a99f,Medium,In Progress,,1/21/2023 11:03,1/27/2023 15:27,1,1.1,"Exploratory and MFT #22
+
+*The function being tested:* Deposit Money
+
+*The initial state of the system:* On and idle
+
+*Steps to reproduce the bug:* Insert card 1, enter the correct pin 42, select deposit, select checking account, and enter the value to deposit 20
+
+*Expected outcome:* receipt will be printed illustrating the deposit to the checking account was made. The receipt will show the total available balance which will be greater than the available balance. The difference between the total balance and the available balance will be the deposited amount. 
+
+Mon Jan 23 15:13:42 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+DEPOSIT TO: CHKG
+AMOUNT: $20.00
+TOTAL BAL: $120.00
+AVAILABLE: $100.00
+
+*Actual outcome 1.0:* receipt is printed illustrating the deposit to the checking account was made. The receipt shows the total available balance which will be greater than the available balance. The difference between the total balance and the available balance is *$10 less than the deposited amount entered.*
+
+Mon Jan 23 15:13:42 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+DEPOSIT TO: CHKG
+AMOUNT: $20.00
+TOTAL BAL: $110.00
+AVAILABLE: $100.00
+
+*Note:* The same issue arises when trying to deposit money into the savings account.  
+
+The defect remains in version 1.1, the only difference is the amount deposited in the account is 10 cents less than the actual amount requested for the deposit.
+
+*Actual outcome 1.1:* 
+
+Mon Jan 23 15:13:42 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+DEPOSIT TO: CHKG
+AMOUNT: $20.00
+TOTAL BAL: $119.90
+AVAILABLE: $100.00
+
+The issue persists in version 1.1.",,
+Bug,AM10-8,10009,Withdraw Money: Incorrect amount withdrawn from the saving account when withdrawing $20,Jaskaran Bhatia,63cc21a96178fcc941d9dba3,Medium,Done,Done,1/21/2023 11:22,1/23/2023 20:21,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial savings account balance is $1000
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select savings account, select the amount to withdraw ($20).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $20
+TOTAL BALANCE: $980
+AVAILABLE: $980
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $40
+TOTAL BALANCE: $960
+AVAILABLE: $960
+
+Message asking if you would like to do another transaction.
+
+This issue is fixed in version 1.1.",1.1,
+Bug,AM10-10,10011,Transfer money: Transfer from checking to savings or savings to checking,Jannine Osman,63cc1268f6d42a7a4633a99f,Medium,In Progress,,1/21/2023 11:32,1/27/2023 15:27,1,1.1,"Exploratory and MFT #29
+
+*The function being tested:* Transfer money from checking to savings or vice-versa
+
+*The initial state of the system:* The system is on and idle
+
+*Detailed steps to reproduce the bug:* insert card 1, enter the correct pin 42, select transfer money, select checking as the first account, select savings as the next account, and enter the amount of $10 to transfer.
+
+*Expected output:*  A printed receipt displaying the details of the transfer. Checking to savings should be shown on the receipt to indicate the transfer amounts going from the checking account to the savings account. The new balances for both accounts should be displayed. The checking account balance should be decreased by the transfer amount and the savings account should be increased by the transfer amount. The user should be prompted to complete another transaction or exit.
+
+Mon Jan 23 15:24:52 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #3
+TRANSFER FROM: CHKG TO: SVGS 
+AMOUNT: $10
+TOTAL BAL: $1010.00
+AVAILABLE: $1010.00
+
+*Actual output 1.0:* A printed receipt is displayed showing the incorrect order of accounts. The receipt shows from savings to checking. The new balances of both accounts are displayed. The transferred amount is reduced by 50 cents. The new balances of the account are incorrectly updated. The user is prompted to complete another transaction or exit. 
+
+Mon Jan 23 15:24:52 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #3
+TRANSFER FROM: SVGS TO: CHKG
+AMOUNT: $9.50
+TOTAL BAL: $1009.50
+AVAILABLE: $1009.50
+
+*Note:* When transferring from checking to savings or savings to checking the amount transferred is always 50 cents less than the entered amount. Also, note that the receipt shows the wrong order of the transaction. The receipt flips the selected transfer and receiving account. For example, when transferring from savings to checking on the receipt it displays from checking to savings. 
+
+This issue is partly fixed in version 1.1. The balances are updated correctly but 
+
+*Actual output 1.1:* A printed receipt is displayed showing the incorrect order of accounts. The new balances of the account are correctly updated. The user is prompted to complete another transaction or exit. 
+
+Mon Jan 23 15:24:52 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #3
+TRANSFER FROM: SVGS TO: CHKG
+AMOUNT: $10
+TOTAL BAL: $1010.00
+AVAILABLE: $1010.00
+
+The issue persists in version 1.1.",,
+Bug,AM10-11,10012,Incorrect Receipt: Receipt has card 2 printed rather than card 1,Anshdeep singh,63cc1edecd6a09abe71f95ac,Medium,In Progress,,1/21/2023 11:33,1/23/2023 20:50,,,"Exploratory and MFT #14
+
+*The function being tested:* Receipt created after any transaction
+
+*The initial state of the system:* On and idle
+
+*Detailed steps to reproduce the bug:* Insert a card number 1,  enter the correct pin 42, select transfer money, select saving for the first account,  checking for the transfer account, enter the amount to transfer
+
+*Expected output:*  The receipt details should include car number 1.
+
+*Actual output:* The receipt details have card number 2.
+
+This issue remains in version 1.1",1,1.1
+Bug,AM10-12,10013,System start-up: Connection established with bank,Jannine Osman,63cc1268f6d42a7a4633a99f,Medium,In Progress,,1/21/2023 11:42,1/23/2023 20:50,1,1.1,"MFT #3
+
+*The function being tested:* System start-up
+
+*The initial state of the system:* On and Idle
+
+*Detailed steps to reproduce the bug:* Turn the system on
+
+*Expected output:* System output should demonstrate that a connection has been established to the Bank.
+
+*Actual output:* This does not demonstrate a connection has been made to the bank. There is no system output or indication that a secure connection has been made. 
+
+The issue persists in version 1.1.",,
+Bug,AM10-13,10014,Invalid PIN Extension: Prompts to enter correct PIN twice after one incorrect PIN entry,Anshdeep singh,63cc1edecd6a09abe71f95ac,Medium,In Progress,,1/21/2023 11:46,1/23/2023 20:57,1,1.1,"*The function being tested:* Invalid PIN Extension
+
+*The initial state of the system:* On and idle
+
+*Detailed steps to reproduce the bug:* Insert a card number 1, enter the incorrect PIN 1 time i.e 45, then enter the correct PIN 42.
+
+*Expected output:* The card should be accepted after entering the correct PIN once the incorrect PIN was entered before, the transaction menu should be displayed
+
+*Actual output:* The user is prompted to enter the correct PIN twice, rather than displaying the transaction menu
+
+*Note:* The receipt has an incorrect card number printed which is always 1 more than the actual card number, for example, when we entered card number 2, the receipt had card number 3 printed on it.
+
+This issue persists in version 1.1.",,
+Bug,AM10-14,10015,Withdraw Money: Incorrect amount withdrawn from the checking account when withdrawing $20,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,Done,Done,1/21/2023 12:11,1/23/2023 20:27,1,,"MFT #14
+
+*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial checking account balance is $100
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select checkings account, select the amount to withdraw ($20).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the checkings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: CHKG
+AMOUNT: $20
+TOTAL BALANCE: $80
+AVAILABLE: $80
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the checkings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: CHKG
+AMOUNT: $40
+TOTAL BALANCE: $60
+AVAILABLE: $60
+
+Message asking if you would like to do another transaction.
+
+*Note:* This bug is the same for when using card 1 or card 2, the only thing that changes is for the Expected Output where if card 1 is being used then the CARD 1 TRANS #1 line is expected, if card 2 is being used then the CARD 2 TRANS #1 is expected.
+
+This issue is fixed in version 1.1",1.1,
+Bug,AM10-15,10016,Withdraw Money: Incorrect amount withdrawn from the saving account when withdrawing $40,Jaskaran Bhatia,63cc21a96178fcc941d9dba3,Medium,Done,Done,1/21/2023 12:13,1/23/2023 20:27,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial savings account balance is $1000
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select savings account, select the amount to withdraw ($40).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $40
+TOTAL BALANCE: $960
+AVAILABLE: $960
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $60
+TOTAL BALANCE: $940
+AVAILABLE: $940
+
+Message asking if you would like to do another transaction.
+
+This issue is fixed in version 1.1",1.1,
+Bug,AM10-16,10017,Withdraw Money: Incorrect amount withdrawn from the saving account when withdrawing $60,Jaskaran Bhatia,63cc21a96178fcc941d9dba3,Medium,Done,Done,1/21/2023 12:15,1/23/2023 20:27,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial savings account balance is $1000
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select savings account, select the amount to withdraw ($60).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $60
+TOTAL BALANCE: $940
+AVAILABLE: $940
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $100
+TOTAL BALANCE: $900
+AVAILABLE: $900
+
+Message asking if you would like to do another transaction.
+
+This issue is fixed in version 1.1",1.1,
+Bug,AM10-17,10018,Withdraw Money: Incorrect amount withdrawn from the saving account when withdrawing $100,Jaskaran Bhatia,63cc21a96178fcc941d9dba3,Medium,Done,Done,1/21/2023 12:17,1/23/2023 20:27,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial savings account balance is $1000
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select savings account, select the amount to withdraw ($100).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $100
+TOTAL BALANCE: $900
+AVAILABLE: $900
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $200
+TOTAL BALANCE: $800
+AVAILABLE: $800
+
+Message asking if you would like to do another transaction.",1.1,
+Bug,AM10-18,10019,Withdraw Money: Incorrect amount withdrawn from the checking account when withdrawing $40,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,Done,Done,1/21/2023 12:19,1/23/2023 20:27,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial checking account balance is $100
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select checkings account, select the amount to withdraw ($40).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the checkings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: CHKG
+AMOUNT: $40
+TOTAL BALANCE: $60
+AVAILABLE: $60
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the checkings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: CHKG
+AMOUNT: $60
+TOTAL BALANCE: $40
+AVAILABLE: $40
+
+Message asking if you would like to do another transaction.
+
+*Note:* This bug is the same for when using card 1 or card 2, the only thing that changes is for the Expected Output where if card 1 is being used then the CARD 1 TRANS #1 line is expected, if card 2 is being used then the CARD 2 TRANS #1 is expected.
+
+This issue is fixed in version 1.1",1.1,
+Bug,AM10-19,10020,Withdraw Money: Incorrect amount withdrawn from the saving account when withdrawing $200,Jaskaran Bhatia,63cc21a96178fcc941d9dba3,Medium,Done,Done,1/21/2023 12:20,1/23/2023 20:27,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial savings account balance is $1000
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select savings account, select the amount to withdraw ($200).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $200
+TOTAL BALANCE: $800
+AVAILABLE: $800
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the savings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $20
+TOTAL BALANCE: $980
+AVAILABLE: $980
+
+Message asking if you would like to do another transaction.",1.1,
+Bug,AM10-20,10021,Withdraw Money: Incorrect amount withdrawn from the checking account when withdrawing $60,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,Done,Done,1/21/2023 12:22,1/23/2023 20:28,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial checking account balance is $100
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select checkings account, select the amount to withdraw ($60).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the checkings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: CHKG
+AMOUNT: $60
+TOTAL BALANCE: $40
+AVAILABLE: $40
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the checkings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: SVGS
+AMOUNT: $100
+TOTAL BALANCE: $900
+AVAILABLE: $900
+
+Message asking if you would like to do another transaction.
+
+*Note:* This bug is the same for when using card 1 or card 2, the only thing that changes is for the Expected Output where if card 1 is being used then the CARD 1 TRANS #1 line is expected, if card 2 is being used then the CARD 2 TRANS #1 is expected.
+
+This issue is fixed in version 1.1",1.1,
+Bug,AM10-21,10022,Withdraw Money: Incorrect amount withdrawn from the checking account when withdrawing $100,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,Done,Done,1/21/2023 12:25,1/23/2023 20:28,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial checking account balance is $100
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select checkings account, select the amount to withdraw ($100).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the checkings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 1 TRANS #1
+WITHDRAWL FROM: CHKG
+AMOUNT: $100
+TOTAL BALANCE: $0
+AVAILABLE: $0
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* No Receipt is printed
+
+Message saying “Insufficient available balance” and asking if you would like to do another transaction.
+
+*Note:* This bug is the same for when using card 1 or card 2, the only thing that changes is for the Expected Output where if card 1 is being used then the CARD 1 TRANS #1 line is expected, if card 2 is being used then the CARD 2 TRANS #1 is expected.
+
+This issue is fixed in version 1.1",1.1,
+Bug,AM10-22,10023,Withdraw Money: Incorrect amount withdrawn from the checking account when withdrawing $200,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,Done,Done,1/21/2023 12:27,1/23/2023 20:28,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial checking account balance is $100
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdrawal, select checkings account, select the amount to withdraw ($200).
+
+*Expected outcome:* No Receipt is printed
+
+Message saying “Insufficient available balance” and asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the checkings account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: CHKG
+AMOUNT: $20
+TOTAL BALANCE: $80
+AVAILABLE: $80
+
+Message asking if you would like to do another transaction.
+
+*Note:* This bug is the same for when using card 1 or card 2.",1.1,
+Bug,AM10-24,10025,Withdraw Money: Incorrect amount withdrawn from the money market account when withdrawing $200,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,Done,Done,1/21/2023 13:09,1/23/2023 20:28,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial checking account balance is $5000
+
+*Steps to reproduce the bug:* Insert card 2, enter a correct pin 1234, select withdrawal, select money market account, select the amount to withdraw ($200).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $200
+TOTAL BALANCE: $4800
+AVAILABLE: $4800
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 3 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $20
+TOTAL BALANCE: $4980
+AVAILABLE: $4980
+
+Message asking if you would like to do another transaction.
+
+This issue is fixed in version 1.1",,
+Bug,AM10-25,10026,Withdraw Money: Incorrect amount withdrawn from the money market account when withdrawing $20,Jaskaran Bhatia,63cc21a96178fcc941d9dba3,Medium,Done,Done,1/21/2023 13:09,1/23/2023 20:28,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial savings account balance is $5000
+
+*Steps to reproduce the bug:* Insert card 2, enter a correct pin 1234, select withdrawal, select money market account, select the amount to withdraw ($20).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $20
+TOTAL BALANCE: $4980
+AVAILABLE: $4980
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt will be printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 3 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $40
+TOTAL BALANCE: $4960
+AVAILABLE: $4960
+
+Message asking if you would like to do another transaction.
+
+This issue is fixed in version 1.1",,
+Bug,AM10-26,10027,Withdraw Money: Incorrect amount withdrawn from the money market account when withdrawing $40,Jaskaran Bhatia,63cc21a96178fcc941d9dba3,Medium,Done,Done,1/21/2023 13:10,1/23/2023 20:28,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial savings account balance is $5000
+
+*Steps to reproduce the bug:* Insert card 2, enter a correct pin 1234, select withdrawal, select money market account, select the amount to withdraw ($40).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $40
+TOTAL BALANCE: $4960
+AVAILABLE: $4960
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt will be printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 3 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $60
+TOTAL BALANCE: $4940
+AVAILABLE: $4940
+
+Message asking if you would like to do another transaction.
+
+This issue is fixed in version 1.1",1.1,
+Bug,AM10-27,10028,Withdrawal Money: Incorrect amount withdrawn from the saving account when withdrawing $60,Jaskaran Bhatia,63cc21a96178fcc941d9dba3,Medium,Done,Done,1/21/2023 13:14,1/23/2023 20:28,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial savings account balance is $5000
+
+*Steps to reproduce the bug:* Insert card 2, enter a correct pin 1234, select withdrawal, select money market account, select the amount to withdraw ($60).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $60
+TOTAL BALANCE: $4940
+AVAILABLE: $4940
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt will be printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 3 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $100
+TOTAL BALANCE: $4900
+AVAILABLE: $4900
+
+Message asking if you would like to do another transaction.
+
+This issue is fixed in version 1.1",,
+Bug,AM10-28,10029,Withdraw Money: Incorrect amount withdrawn from the money market account when withdrawing $100,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,Done,Done,1/21/2023 13:17,1/23/2023 20:28,1,,"*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle, initial checking account balance is $5000
+
+*Steps to reproduce the bug:* Insert card 2, enter a correct pin 1234, select withdrawal, select money market account, select the amount to withdraw ($100).
+
+*Expected outcome:* Detailed receipt will be printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $100
+TOTAL BALANCE: $4900
+AVAILABLE: $4900
+
+Message asking if you would like to do another transaction.
+
+*Actual outcome:* Detailed receipt is printed outlining the withdrawal from the money market account as follows:
+
+Current date and time at which transaction was made
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 3 TRANS #1
+WITHDRAWL FROM: MMKT
+AMOUNT: $200
+TOTAL BALANCE: $4800
+AVAILABLE: $4800
+
+Message asking if you would like to do another transaction.
+
+This issue is fixed in version 1.1",1.1,
+Bug,AM10-29,10030,Message displayed after completing a transaction is has incorrect spelling of words,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,In Progress,,1/23/2023 13:12,1/27/2023 15:28,1,1.1,"Exploratory and MFT #15
+
+*The function being tested:* Withdraw Money
+
+*The initial state of the system:* On and idle
+
+*Steps to reproduce the bug:* Insert card 1, enter a correct pin 42, select withdraw, select checking account, and enter the value to withdraw ($20)
+
+*Expected outcome:* Receipt will be printing outlining the transaction details and a message will be displayed to the screen saying
+
+“Would you like to do another transaction?
+1) Yes
+2) No”
+
+*Actual outcome 1.0:* Receipt is be printing outlining the transaction details and a message will be displayed to the screen saying
+
+“Wood you like to do another transactio
+
+# Yes
+# No”
+
+The defect remains in version 1.1, the only difference is “Would” is spelt properly in 1.1, but “transaction” is spelt as “transacti” in 1.1.
+
+*Actual outcome 1.1:* Receipt is be printing outlining the transaction details and a message will be displayed to the screen saying
+
+“Would you like to do another transacti
+
+# Yes
+# No”
+
+The issue persists in version 1.1.",,
+Bug,AM10-30,10031,"Missing ""dollar sign ($)"" for option number 3) when selection an amount of 60 dollars for a withdrawal",Anshdeep singh,63cc1edecd6a09abe71f95ac,Medium,In Progress,,1/23/2023 13:13,1/27/2023 15:28,1.1,,"*The function being tested:* Withdrawal
+
+*The initial state of the system:* On and idle
+
+*Steps to reproduce the bug:* Insert card 1, enter the correct pin 42, select withdrawal, select checking account, and select 3rd amount of 60 dollars from the amount menu
+
+*Expected outcome:*  We expect a list of different amount*s* with a dollar sign in front of the value as given below:
+
+Amount of cash to withdraw:
+
+1)$20
+
+2)$40
+
+3)$60
+
+4)$100
+
+5)$200
+
+*Actual outcome:*  Option number 3) was missing a dollar sign
+
+Amount of cash to withdraw:
+
+1)$20
+
+2)$40
+
+3) 60
+
+4)$100
+
+5)$200
+
+The issue persists in version 1.1.",,
+Bug,AM10-31,10032,Balance Checking: Incorrect Accounts for Card 1,Anshdeep singh,63cc1edecd6a09abe71f95ac,Medium,In Progress,,1/23/2023 16:05,1/27/2023 8:23,1,1.1,"*The function being tested:*  Balance Inquiry of card 1
+
+*The initial state of the system:* The system is on and idle
+
+*Detailed steps to reproduce the bug:* Insert card 1, enter the correct pin 42, select balance inquiry 
+
+*Expected output:*  The accounts displayed on the screen should be Checking and Savings
+*Actual output 1.0:* The accounts displayed on the screen is Checking, and Money Market
+
+*Actual output 1.1:* The accounts displayed on the screen is Checking, Savings and Money Market
+
+*Note:* It gives “unknown error” when the user tries to check the balance of money market account which makes sense as money market account does not exist.
+
+This issue still exists in version 1.1",,
+Bug,AM10-32,10033,Deposit Money: The amount being deducted rather than being deposited in checking and savings accounts when the amount is below $10,Anshdeep singh,63cc1edecd6a09abe71f95ac,Medium,In Progress,,1/23/2023 16:40,1/27/2023 15:29,1,1.1,"The function being tested: Deposit Money
+
+The initial state of the system: On and idle
+
+Steps to reproduce the bug: Insert card 1, enter the correct pin 42, select deposit, select checking account, and enter the value to deposit 5
+
+Expected outcome: receipt will be printed illustrating the deposit to the checking account was made. The receipt will show the total available balance which will be greater than the available balance. The difference between the total balance and the available balance will be the deposited amount.
+
+Mon Jan 23 16:33:54 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+DEPOSIT TO: CHKG
+AMOUNT: $5.00
+TOTAL BAL: $105.00
+AVAILABLE: $100.00
+
+Actual outcome 1.0: receipt is printed illustrating the deposit to the checking account was made. The receipt shows the total available balance which will be greater than the available balance. The amount is getting deducted from the account rather than getting deposited.
+
+Mon Jan 23 16:33:54 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+DEPOSIT TO: CHKG
+AMOUNT: $5.00
+TOTAL BAL: $95.00
+AVAILABLE: $100.00
+
+Note: The same issue arises when trying to deposit money into the savings account.
+
+The defect remains in version 1.1, the only difference is the amount is no longer getting deducted but is still wrong, it is 10 cents less than the actual amount requested for the deposit.
+
+Actual outcome 1.1:
+
+Mon Jan 23 15:13:42 MST 2023
+First National Bank of Podunk
+ATM #42 Gordon College
+CARD 2 TRANS #1
+DEPOSIT TO: CHKG
+AMOUNT: $5.00
+TOTAL BAL: $104.90
+AVAILABLE: $100.00
+
+The issue persists in version 1.1.",,
+Bug,AM10-33,10034,Incorrect Receipt: Receipt has card 3 printed rather than card 2,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,In Progress,,1/23/2023 20:08,1/23/2023 20:52,1,1.1,"Exploratory and MFT #14
+
+*The function being tested:* Receipt created after any transaction
+
+*The initial state of the system:* On and idle
+
+*Detailed steps to reproduce the bug:* Insert a card number 2,  enter the correct pin 1234, select transfer money, select saving for the first account,  checking for the transfer account, enter the amount to transfer
+
+*Expected output:*  The receipt details should include car number 2.
+
+*Actual output:* The receipt details have card number 3.
+
+This issue remains in version 1.1",,
+Bug,AM10-34,10035,Withdraw Money: Incorrect available accounts displayed for card 1,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,In Progress,,1/23/2023 20:38,1/27/2023 8:24,1,1.1,"*The function being tested:*  Withdraw of card 1
+
+*The initial state of the system:* The system is on and idle
+
+*Detailed steps to reproduce the bug:* Insert card 1, enter the correct pin 42, select withdraw 
+
+*Expected output:*  The accounts displayed on the screen should be Checking and Savings
+*Actual output:* The accounts displayed on the screen are Checking, Savings and Money Market
+
+*Note:* It gives “unknown error” when the user tries to withdraw from the money market account which makes sense as money market account does not exist.
+
+This issue still exists in version 1.1.",,
+Bug,AM10-35,10036,Withdraw Money: Incorrect available accounts displayed for card 2,Aleksander Rudolf,63cc1e10e28ec74364cd3ef6,Medium,In Progress,,1/23/2023 20:42,1/27/2023 15:29,1,1.1,"*The function being tested:*  Withdraw of card 2
+
+*The initial state of the system:* The system is on and idle
+
+*Detailed steps to reproduce the bug:* Insert card 2, enter the correct pin 1234, select withdraw 
+
+*Expected output:*  The accounts displayed on the screen should be Checking and Money Market
+*Actual output:* The accounts displayed on the screen are Checking, Savings, and Money Market
+
+*Note:* It gives “unknown error” when the user tries to withdraw from the savings account which makes sense as savings account does not exist.
+
+The issue persists in version 1.1.",,
